@@ -1,7 +1,6 @@
 package uttpil
 
 import (
-	"log"
 	"net/http"
 )
 
@@ -56,7 +55,6 @@ func (h ForMethod) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			h.CONNECT(w, r)
 		}
 	default:
-		log.Printf("no handler for method %q", r.Method)
-		http.NotFound(w, r)
+		RespondErrMethodNotImplemented(w, r)
 	}
 }
