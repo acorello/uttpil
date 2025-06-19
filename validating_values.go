@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
-
-	"github.com/acorello/uttpil/prep"
 )
 
 type UrlValuesHelper struct {
@@ -43,18 +41,16 @@ func NewUrlValuesHelper(r *http.Request) (values UrlValuesHelper, err error) {
 //		})
 //
 //		form.Errors()
-func (my UrlValuesHelper) Give(key string, sanitizer prep.Sanitiser, consumer func(string) error) {
+func (my UrlValuesHelper) Give(key string, parser func(string) error) {
 	if !my.Has(key) {
 		my.joinError(key, fmt.Errorf("not found"))
 		return
 	}
-	value := my.Get(key)
-	value = sanitizer(value)
-	err := consumer(value)
+	err := parser(my.Get(key))
 	my.joinError(key, err)
 }
 
-func (my UrlValuesHelper) Get(name string, sanitizers ...prep.Sanitiser) string {
+func (my UrlValuesHelper) Get(name string, sanitizers ...func(string) string) string {
 	v := my.Values.Get(name)
 	for s := range slices.Values(sanitizers) {
 		v = s(v)
