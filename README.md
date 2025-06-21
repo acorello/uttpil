@@ -8,11 +8,8 @@ Named as a pronounceable blend of 'HTTP' and 'Utilities'
 
 ## The `ForMethod` http-handler
 
-There is a one-to-many relationship between a URL path and the HTTP methods it could serve.
-
-`uttpil.ForMethod` is a struct implementing `http.Handler` (i.e. `ServeHTTP(http.ResponseWriter, *http.Request)`) having one field for each HTTP method.
-
-An `http.HandlerFunc` should be assigned to each field/method you want to support for the path. `ForMethod` returns `501 NotImplemented` when no handler is available for the requested method.
+There is a one-to-many relationship between a URL path and the HTTP methods it could serve, `ForMethod` helps writing code
+that respects that.
 
 ```go
 mux.Handle("/resource/path", uttpil.ForMethod{
@@ -22,6 +19,10 @@ mux.Handle("/resource/path", uttpil.ForMethod{
     POST: h.Post, // define your handler elsewhere
 })
 ```
+
+It's a simple struct with one field per HTTP method. The field type is a `http.HandlerFunc`.
+
+If no function has been assigned for an HTTP verb it returns `501 NotImplemented`.
 
 ## The `LoggingHandler`
 
